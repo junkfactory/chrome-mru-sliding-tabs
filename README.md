@@ -1,4 +1,5 @@
-# chrome-mru-tab-stack
+# chrome-mru-sliding-tabs
+
 Chrome extension for MRU like tab
 
 Based on excellent Tab Stack
