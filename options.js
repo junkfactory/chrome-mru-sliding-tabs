@@ -26,6 +26,7 @@ document.getElementById("option_form").addEventListener("submit", function () {
   }
 
   chrome.storage.local.set({ delay: delay });
+  window.close();
 });
 
 // Restores select box state to saved value from localStorage.

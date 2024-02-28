@@ -19,34 +19,37 @@
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-const ALARM_ID = "mru-sliding-tabs";
-let activeTabId = null;
 // Add listener for when the selected tab in a window changes.
-chrome.tabs.onActivated.addListener(function (activeInfo) {
-  chrome.storage.local.get("delay").then((s) => {
-    const delay = s.delay || 1;
-    activeTabId = activeInfo.tabId;
-    chrome.alarms.clear(ALARM_ID).then(() => {
-      chrome.alarms.create(ALARM_ID, {
-        when: Date.now() + delay * 1000,
-      });
-    });
+
+const LAST_TID = "pid";
+
+chrome.tabs.onActivated.addListener(async function (activeInfo) {
+  await chrome.storage.local.get(LAST_TID).then((d) => {
+    console.debug("prev tid", d);
+    const pid = d.pid;
+    if (pid !== undefined) {
+      console.debug("cleear timeout", pid);
+      clearTimeout(pid);
+      chrome.storage.local.remove(LAST_TID);
+    }
+  });
+  await chrome.storage.local.get("delay").then((d) => {
+    console.debug("delay:", d);
+    const latestTimeoutId = setTimeout(() => {
+      slideTab(activeInfo.tabId);
+    }, d.delay * 1000);
+    chrome.storage.local.set({ pid: latestTimeoutId });
   });
 });
 
-chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name == ALARM_ID && activeTabId) {
-    slideTabs(activeTabId);
-  }
-});
-
-function slideTabs(oldTabId) {
+function slideTab(activeTabId) {
+  console.debug("moving", activeTabId);
   // Get the selected tab after the timeout
   chrome.tabs.query({ active: true }).then(([tabInfo]) => {
-    if (tabInfo.id == oldTabId) {
+    if (tabInfo.id == activeTabId) {
       // pinned tab will always be left most
       if (tabInfo.pinned)
-        chrome.tabs.move(oldTabId, {
+        chrome.tabs.move(activeTabId, {
           index: 0,
         });
       else {
@@ -54,7 +57,7 @@ function slideTabs(oldTabId) {
         chrome.tabs.query({ windowId: tabInfo.windowId }).then((tabs) => {
           let pinnedCount = 0;
           while (tabs[pinnedCount].pinned) ++pinnedCount;
-          chrome.tabs.move(oldTabId, { index: pinnedCount });
+          chrome.tabs.move(activeTabId, { index: pinnedCount });
         });
       }
     }
