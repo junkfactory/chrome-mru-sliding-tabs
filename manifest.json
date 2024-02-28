@@ -12,7 +12,7 @@
     "48": "icon_48.png"
   },
   "options_page": "options.html",
-  "permissions": ["storage", "alarms"],
+  "permissions": ["storage"],
   "background": {
     "service_worker": "background.js"
   },
