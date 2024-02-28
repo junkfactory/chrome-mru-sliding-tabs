@@ -45,24 +45,38 @@ chrome.tabs.onActivated.addListener(async function (activeInfo) {
   });
 });
 
-function slideTab(activeTabId) {
-  console.debug("moving", activeTabId);
+function slideTab(selectedTabId) {
+  console.debug("moving", selectedTabId);
   // Get the selected tab after the timeout
   chrome.tabs.query({ active: true }).then(([tabInfo]) => {
-    if (tabInfo.id == activeTabId) {
+    console.debug("active tab:", tabInfo);
+    if (tabInfo.id == selectedTabId) {
       // pinned tab will always be left most
-      if (tabInfo.pinned)
-        chrome.tabs.move(activeTabId, {
-          index: 0,
-        });
-      else {
-        // move after all pinned tabs
-        chrome.tabs.query({ windowId: tabInfo.windowId }).then((tabs) => {
-          let pinnedCount = 0;
-          while (tabs[pinnedCount].pinned) ++pinnedCount;
-          chrome.tabs.move(activeTabId, { index: pinnedCount });
-        });
+      if (tabInfo.pinned) {
+        movePinnedTab(selectedTabId);
+      } else {
+        moveUnpinnedTab(selectedTabId, tabInfo);
       }
     }
   });
+}
+
+function movePinnedTab(selectedTabId) {
+  chrome.tabs.move(selectedTabId, {
+    index: 0,
+  });
+}
+
+function moveUnpinnedTab(selectedTabId, tabInfo) {
+  // move after all pinned tabs
+  chrome.tabs
+    .query({ windowId: tabInfo.windowId, pinned: true })
+    .then((tabs) => {
+      const pinnedCount = tabs.length;
+      if (tabInfo.groupId > 0) {
+        //move the tab group
+        chrome.tabGroups.move(tabInfo.groupId, { index: pinnedCount });
+      }
+      chrome.tabs.move(selectedTabId, { index: pinnedCount });
+    });
 }
