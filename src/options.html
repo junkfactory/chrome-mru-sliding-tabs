@@ -1,46 +1,20 @@
 <html>
-<head><title>Tab Stack Options</title></head>
-<script>
 
-// Saves options to localStorage.
-function save_options()
-{
-   var delay = parseFloat(document.getElementById("delay").value);
+<head>
+   <title>Tab Stack Options</title>
+</head>
 
-   if(isNaN(delay) || (delay < 0))
-   {
-      delay = chrome.extension.getBackgroundPage().defaultDelay;
-   }
-
-   if(delay == chrome.extension.getBackgroundPage().defaultDelay)
-   {
-      delete localStorage["delay"];
-   }
-   else
-   {
-      localStorage["delay"] = delay;
-   }
-}
-
-// Restores select box state to saved value from localStorage.
-function restore_options() {
-   var delay = localStorage["delay"];
-   if(!delay)
-   {
-      delay = chrome.extension.getBackgroundPage().defaultDelay;
-   }
-   document.getElementById("delay").value = delay;
-}
-
-</script>
-
-<body onload="restore_options()">
-   <img src="icon_48.png"  width="16" height="16"/>
-   <strong>Tab Stack Options</strong>
-   <br>
-   Delay before moving tabs:
-   <input id="delay" type="text" size="6" /> seconds
-   <br>
-   <button onclick="save_options()">Save</button>
+<body>
+   <form id="option_form">
+      <img src="icon_48.png" width="16" height="16" />
+      <strong>Tab Stack Options</strong>
+      <br>
+      Delay before moving tabs:
+      <input id="delay" type="text" size="6" /> seconds
+      <br>
+      <input type="submit"></input>
+   </form>
 </body>
+<script src="options.js"></script>
+
 </html>
