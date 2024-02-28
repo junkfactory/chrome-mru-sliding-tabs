@@ -43,7 +43,6 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 function slideTabs(oldTabId) {
   // Get the selected tab after the timeout
   chrome.tabs.query({ active: true }).then(([tabInfo]) => {
-    console.log(tabInfo);
     if (tabInfo.id == oldTabId) {
       // pinned tab will always be left most
       if (tabInfo.pinned)
@@ -53,7 +52,6 @@ function slideTabs(oldTabId) {
       else {
         // move after all pinned tabs
         chrome.tabs.query({ windowId: tabInfo.windowId }).then((tabs) => {
-          console.log(tabs);
           let pinnedCount = 0;
           while (tabs[pinnedCount].pinned) ++pinnedCount;
           chrome.tabs.move(oldTabId, { index: pinnedCount });
