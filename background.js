@@ -39,7 +39,7 @@ chrome.tabs.onActivated.addListener(async function (activeInfo) {
       () => {
         slideTab(activeInfo.tabId);
       },
-      d?.delay ?? 1 * 1000,
+      (d?.delay || 1) * 1000,
     );
     chrome.storage.local.set({ pid: latestTimeoutId });
   });
