@@ -1,23 +1,23 @@
 {
   "manifest_version": 3,
   "name": "MRU Sliding Tabs",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Slides active tab to the left in MRU order",
   "action": {
     "default_title": "Click for options",
-    "default_popup": "options.html"
+    "default_popup": "src/options.html"
   },
   "icons": {
-    "128": "icon_128.png",
-    "48": "icon_48.png"
+    "128": "src/resources/icon_128.png",
+    "48": "src/resources/icon_48.png"
   },
-  "options_page": "options.html",
+  "options_page": "src/options.html",
   "permissions": ["storage", "tabGroups"],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background.js"
   },
   "options_ui": {
-    "page": "options.html",
+    "page": "src/options.html",
     "open_in_tab": false
   }
 }
