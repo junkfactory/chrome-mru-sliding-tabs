@@ -24,6 +24,7 @@
 const LAST_TID = "pid";
 
 chrome.tabs.onActivated.addListener(async function (activeInfo) {
+  console.debug("onActivated", activeInfo);
   await chrome.storage.local.get(LAST_TID).then((d) => {
     console.debug("prev tid", d);
     const pid = d.pid;
@@ -37,7 +38,7 @@ chrome.tabs.onActivated.addListener(async function (activeInfo) {
     console.debug("delay:", d);
     const latestTimeoutId = setTimeout(
       () => {
-        slideTab(activeInfo.tabId);
+        slideTab(activeInfo);
       },
       (d?.delay || 1) * 1000,
     );
@@ -45,10 +46,11 @@ chrome.tabs.onActivated.addListener(async function (activeInfo) {
   });
 });
 
-function slideTab(selectedTabId) {
-  console.debug("moving", selectedTabId);
+function slideTab(selectedTab) {
+  console.debug("moving", selectedTab);
+  const selectedTabId = selectedTab.tabId;
   // Get the selected tab after the timeout
-  chrome.tabs.query({ active: true }).then(([tabInfo]) => {
+  chrome.tabs.query({ active: true, currentWindow: true }).then(([tabInfo]) => {
     console.debug("active tab:", tabInfo);
     if (tabInfo.id == selectedTabId) {
       // pinned tab will always be left most
