@@ -18,21 +18,26 @@
 // BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
+const options = {};
 
 document.getElementById("option_form").addEventListener("submit", function () {
   const delay = parseFloat(document.getElementById("delay").value);
   if (isNaN(delay) || delay < 0) {
     delay = 1;
   }
+  options.delay = delay;
 
-  chrome.storage.local.set({ delay: delay });
+  const reOrderPinnedTabs = document.getElementById("order_pinned").checked;
+  options.reOrderPinnedTabs = reOrderPinnedTabs;
+
+  chrome.storage.local.set({ options });
   window.close();
 });
 
 // Restores select box state to saved value from localStorage.
-window.onload = function () {
-  chrome.storage.local.get("delay").then((s) => {
-    const delay = s.delay || 1;
-    document.getElementById("delay").value = delay;
-  });
-};
+const data = await chrome.storage.local.get("options");
+Object.assign(options, data.options);
+const delay = options.delay || 1;
+document.getElementById("delay").value = delay;
+document.getElementById("order_pinned").checked =
+  options.reOrderPinnedTabs ?? true;

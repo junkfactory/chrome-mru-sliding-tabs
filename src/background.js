@@ -22,6 +22,25 @@
 // Add listener for when the selected tab in a window changes.
 
 const LAST_TID = "pid";
+const options = {};
+
+async function updateOptions(newOptions) {
+  Object.assign(options, {
+    delay: newOptions?.delay || 1,
+    reOrderPinnedTabs: newOptions?.reOrderPinnedTabs ?? true,
+  });
+}
+
+chrome.storage.local.get("options").then((data) => {
+  const opts = data?.options || { delay: 1, reOrderPinnedTabs: true };
+  updateOptions(opts);
+});
+
+chrome.storage.local.onChanged.addListener((changes) => {
+  if (changes.options) {
+    updateOptions(changes.options.newValue);
+  }
+});
 
 chrome.tabs.onActivated.addListener(async function (activeInfo) {
   console.debug("onActivated", activeInfo);
@@ -34,16 +53,10 @@ chrome.tabs.onActivated.addListener(async function (activeInfo) {
       chrome.storage.local.remove(LAST_TID);
     }
   });
-  await chrome.storage.local.get("delay").then((d) => {
-    console.debug("delay:", d);
-    const latestTimeoutId = setTimeout(
-      () => {
-        slideTab(activeInfo);
-      },
-      (d?.delay || 1) * 1000,
-    );
-    chrome.storage.local.set({ pid: latestTimeoutId });
-  });
+  const latestTimeoutId = setTimeout(() => {
+    slideTab(activeInfo);
+  }, options.delay * 1000);
+  chrome.storage.local.set({ pid: latestTimeoutId });
 });
 
 function slideTab(selectedTab) {
@@ -64,9 +77,11 @@ function slideTab(selectedTab) {
 }
 
 function movePinnedTab(selectedTabId) {
-  chrome.tabs.move(selectedTabId, {
-    index: 0,
-  });
+  if (options.reOrderPinnedTabs) {
+    chrome.tabs.move(selectedTabId, {
+      index: 0,
+    });
+  }
 }
 
 function moveUnpinnedTab(selectedTabId, tabInfo) {
