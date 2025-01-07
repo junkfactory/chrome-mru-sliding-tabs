@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "MRU Sliding Tabs",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Slides active tab to the left in MRU order",
   "action": {
     "default_title": "Click for options",
@@ -14,7 +14,8 @@
   "options_page": "src/options.html",
   "permissions": ["storage", "tabGroups"],
   "background": {
-    "service_worker": "src/background.js"
+    "service_worker": "src/background.js",
+    "type": "module"
   },
   "options_ui": {
     "page": "src/options.html",

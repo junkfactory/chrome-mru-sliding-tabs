@@ -3,29 +3,46 @@
     <title>MRU Sliding Tabs Option</title>
     <style>
       body {
-        min-width: 200px;
+        min-width: 400px;
         background-color: #29292e;
         color: white;
         border: 1px solid #000;
         margin: 0px;
         padding: 10px;
       }
-      form {
-        text-align: center;
+      div,
+      label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      div > img,
+      div > input,
+      span {
+        margin-right: 10px;
       }
     </style>
   </head>
 
   <body>
     <form id="option_form">
-      <img src="resources/icon_48.png" width="16" height="16" />
-      <strong>MRU Sliding Tabs Option</strong>
-      <p>Delay before moving tabs:</p>
-      <p>
+      <div class="box">
+        <img src="resources/icon_48.png" width="16" height="16" />
+        <strong>MRU Sliding Tabs Option</strong>
+      </div>
+      <div>
+        <span>Delay before moving tabs:</span>
         <input id="delay" type="text" size="6" /> seconds
-        <input type="submit" />
-      </p>
+      </div>
+      <div>
+        <label>
+          <input id="order_pinned" type="checkbox" /> Re-order pinned tabs
+        </label>
+      </div>
+      <div>
+        <input type="submit" value="Save" />
+      </div>
     </form>
   </body>
-  <script src="options.js"></script>
+  <script defer src="options.js" type="module"></script>
 </html>
